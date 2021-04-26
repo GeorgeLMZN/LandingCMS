@@ -1,7 +1,6 @@
 <?php
-$_POST = json_decode(file_get_contents('php://input'), true);
 
-$deletedFile = '../../' . $_POST['name'];
+$deletedFile = '../../kdjsiofs82ehq8s7d77.html';
 
 if(file_exists($deletedFile)){
     unlink($deletedFile);

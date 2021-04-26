@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
+    "uikit": "^3.6.20",
     "vue": "^2.6.12"
   },
   "devDependencies": {
