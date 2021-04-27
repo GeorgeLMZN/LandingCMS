@@ -3,6 +3,7 @@ const axios = require('axios');
 const DOMHelper = require('./dom-helper');
 const editorText = require('./editor-text');
 const EditorMeta = require('./editor-meta');
+const EditorImage = require('./editor-images');
 
 module.exports = class Editor {
     constructor() {
@@ -16,6 +17,7 @@ module.exports = class Editor {
             .get("../" + page + "?rnd" + Math.random())
             .then((response) => DOMHelper.parseStringToDom(response.data))
             .then(DOMHelper.wrapTextNodes)
+            .then(DOMHelper.wrapImages)
             .then((dom) => {
                 this.virtualDom = dom;
                 return dom;
@@ -31,7 +33,8 @@ module.exports = class Editor {
 
     enableEditing () {
 
-        const iframe = this.iframe.contentDocument.body.querySelectorAll('text-editor');
+        const iframe = this.iframe.contentDocument.body.querySelectorAll('text-editor'),
+            iframeImages = this.iframe.contentDocument.body.querySelectorAll('[editableImgId]');
 
         iframe.forEach((element) => {
 
@@ -43,6 +46,15 @@ module.exports = class Editor {
         })
 
         this.metaEditor = new EditorMeta (this.virtualDom);
+
+        iframeImages.forEach((element) => {
+
+            const id = element.getAttribute('editableImgId');
+
+            const virtualElement = this.virtualDom.body.querySelector(`[editableImgId="${id}"]`);
+
+            new EditorImage(element, virtualElement);
+        })
 
     }
 
@@ -58,6 +70,9 @@ module.exports = class Editor {
                     outline: 3px solid red;
                     outline-offset: 8px;
                 }
+                [editableImgId]:hover {
+                    border: 2px solid red;
+                }
             `;
 
         this.iframe.contentDocument.head.appendChild(style);
@@ -67,6 +82,8 @@ module.exports = class Editor {
         const newDom = this.virtualDom.cloneNode(this.virtualDom);
 
         DOMHelper.unwrapTextNodes(newDom);
+
+        DOMHelper.unwrapImages(newDom)
 
         const html = DOMHelper.serializeDomToString(newDom)
 

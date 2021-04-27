@@ -58,4 +58,24 @@ module.exports = class DOMHelper {
 
         return dom;
     }
+
+    static wrapImages (dom) {
+
+        dom.body.querySelectorAll("img").forEach((img, i) => {
+
+            img.setAttribute("editableImgId", i);
+
+        })
+
+        return dom;
+
+    }
+
+    static unwrapImages (dom) {
+
+        dom.body.querySelectorAll("[editableImgId]").forEach((img) => img.removeAttribute("editableImgId"));
+
+        return dom;
+
+    }
 }

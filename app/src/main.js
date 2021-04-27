@@ -5,7 +5,7 @@ const axios = require('axios');
 
 window.editor = new Editor ();
 
-const app = new Vue ({
+window.vue = new Vue ({
     el: "#app",
     data : {
         page: "index.html",
@@ -72,12 +72,12 @@ const app = new Vue ({
 
                             });
 
-                            UIkit.notification({message: 'Успешно восстановлено!', status: 'success'});
+                            this.notification('Успешно восстановлено!', 'success');
 
                         })
                         .catch(() => {
 
-                            UIkit.notification({message: 'Ошибка восстановления!', status: 'danger'});
+                            this.notification('Ошибка восстановления!', 'danger');
 
                         })
                 });
@@ -89,11 +89,30 @@ const app = new Vue ({
                 description = this.meta.description,
                 keywords = this.meta.keyword;
 
-            window.editor.metaEditor.setMeta( title, description, keywords);
-        }
+            window.editor.metaEditor.setMeta(title, description, keywords);
+        },
+
+        enableLoader () {
+
+            this.showLoader = true;
+
+        },
+
+        disableLoader () {
+
+            this.showLoader = false;
+
+        },
+
+        notification (message, status) {
+
+            UIkit.notification({message: message, status: status});
+
+        },
+
     },
     created() {
-        this.openPage();
+        this.openPage(this.page);
         axios
             .get("./api/pageList.php")
             .then((res) => {
