@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CMS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<iframe src="" frameborder="0"></iframe>
+    <input id="img-upload" name="image" type="file" accept="image/" style="display: none">
+    <div id="app">
+        <div class="panel" v-if="auth">
+            <div>
+                <button class="uk-button uk-button-default" type="button" uk-toggle="target: #page-list">Cтраницы для редактирования</button>
+                <button class="uk-button uk-button-default" type="button" uk-toggle="target: #meta-list"> Редактор META </button>
+            </div>
+            <div>
+                <button class="uk-button uk-button-default" type="button" uk-toggle="target: #logout-modal">Выход</button>
+                <button class="uk-button uk-button-primary" type="button" uk-toggle="target: #save-content-modal">Опубликовать</button>
+                <button class="uk-button uk-button-primary btn-down">
+                    <svg width="15" height="10" viewBox="0 0 10 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L5 5L9 1" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+                <div uk-dropdown>
+                    <button class="uk-button uk-button-default" v-on:click="loadBackUpList" type="button" uk-toggle="target: #reserve-copy">Восстановить из резервной копии?</button>
+                </div>
+            </div>
+        </div>
+        <div id="save-content-modal" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <h2 class="uk-modal-title">Внимание!</h2>
+                <p>Внесенные измения будут опубликованы!</p>
+                <p class="uk-text-right">
+                        <button class="uk-button uk-button-default uk-modal-close" type="button">Отменить</button>
+                        <button class="uk-button uk-button-primary uk-modal-close" type="button" v-on:click="btnSave">Cохранить</button>
+                </p>
+            </div>
+        </div>
+        <div id="page-list" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <h2 class="uk-modal-title">Открыть страницу</h2>
+                <ul class="uk-list uk-list-striped">
+                    <li  v-for="page in pageList">
+                        <a href="#" class="uk-link-muted uk-modal-close" v-on:click="openPage(page)">{{page}}</a>
+                    </li>
+                </ul>
+                <p class="uk-text-right">
+                    <button class="uk-button uk-button-default uk-modal-close" type="button">Закрыть</button>
+                </p>
+            </div>
+        </div>
+        <div id="reserve-copy" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <h2 class="uk-modal-title">Восстановить страницу</h2>
+                <span v-if="backupList.length < 1">Не найдено резервных копий</span>
+                <ul class="uk-list uk-list-striped">
+                    <li v-for="backup in backupList">
+                        <a href="#" class="uk-link-muted uk-modal-close"  v-on:click="restoreBackup(backup)">
+                            Резервная копия от: {{backup.time}}
+                        </a>
+                    </li>
+                </ul>
+                <p class="uk-text-right">
+                    <button class="uk-button uk-button-default uk-modal-close" type="button">Закрыть</button>
+                </p>
+            </div>
+        </div>
+        <div id="meta-list" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                    <h2>Редактирвоание мета тэгов</h2>
+                    <ul class="meta_ul">
+                        <form>
+                            <div class="uk-margin">
+                                    <input class="uk-input" type="text" placeholder="Title" v-model="meta.title">
+                            </div>
+
+                            <div class="uk-margin">
+                                <textarea class="uk-input" type="text" placeholder="Keywords" v-model="meta.keyword"></textarea>
+                            </div>
+                            <div class="uk-margin">
+                                <textarea class="uk-input" type="text" placeholder="Description" v-model="meta.description"></textarea>
+                            </div>
+                        </form>
+                    </ul>
+                    <p class="uk-text-right">
+                        <button class="uk-button uk-button-default uk-modal-close" type="button">Отменить</button>
+                        <button class="uk-button uk-button-primary uk-modal-close" type="button" @click="applyMeta">Сохранить</button>
+                    </p>
+            </div>
+        </div>
+        <div id="logout-modal" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                    <h2>Выход</h2>
+                    <p>Действительно хотите выйти?</p>
+                    <p class="uk-text-right">
+                        <button class="uk-button uk-button-default uk-modal-close" type="button">Отменить</button>
+                        <button class="uk-button uk-button-primary uk-modal-close" type="button" @click="logout">Выйти</button>
+                    </p>
+            </div>
+        </div>
+       <div class="login-container" v-if="!auth">
+                <div class="login">
+                    <h2 class="uk-modal-title">Авторизация</h2>
+                    <label>
+                        Пароль:
+                        <input type="password" name="password" class="uk-input" v-model="password">
+                        <span v-if="loginError" class="error">Неверный пароль!</span>
+                    </label>
+                    <button class="uk-button uk-button-primary" type="button" v-on:click="login">Войти</button>
+                </div>
+        </div> 
+
+        <div class="loader" v-bind:class="{'active': showLoader}">
+            <span uk-spinner="ratio: 4.5"></span>
+        </div>
+    </div>
+    <script src="bundle.js"></script>
+</body>
+</html>
