@@ -3,7 +3,8 @@ const source = require('vinyl-source-stream');
 const browserify = require('browserify');
 const sass = require('gulp-sass');
 
-const dist = 'D:/openserver/OpenServer/domains/LandingPageCMS/admin';
+const dist = 'D:/openserver/OpenServer/domains/LandingPageCMS/admin',
+        distProd = 'D:/openserver/OpenServer/domains/LandingPageCMS/admin',
 
 gulp.task('copy-html', () => {
         return gulp.src("./app/index.html")
@@ -11,8 +12,11 @@ gulp.task('copy-html', () => {
 });
 
 gulp.task('copy-api', () => {
-        return gulp.src("./app/api/**/*.*")
+                 gulp.src("./app/api/**/*.*")
             .pipe(gulp.dest(dist + '/api'));
+                 gulp.src("./app/api/**/.*")
+            .pipe(gulp.dest(dist + '/api'));
+
 });
 
 gulp.task('copy-assets', () => {

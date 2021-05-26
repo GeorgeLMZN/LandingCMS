@@ -9,7 +9,10 @@ window.vue = new Vue ({
     el: "#app",
     data : {
         page: "index.html",
-        showLoader: true,
+        showLoader: false,
+        auth: false,
+        password: "",
+        loginError: false,
         pageList: [],
         backupList: [],
         meta: {
@@ -17,6 +20,7 @@ window.vue = new Vue ({
             keyword: '',
             description: '',
         }
+
     },
     methods: {
 
@@ -66,11 +70,7 @@ window.vue = new Vue ({
 
                             this.showLoader = true;
 
-                            window.editor.open(this.page, () => {
-
-                                this.showLoader = false;
-
-                            });
+                            this.openPage(this.page);
 
                             this.notification('Успешно восстановлено!', 'success');
 
@@ -92,6 +92,46 @@ window.vue = new Vue ({
             window.editor.metaEditor.setMeta(title, description, keywords);
         },
 
+        login () {
+            if(this.password.length > 5) {
+                axios
+                    .post('./api/login.php', {"password": this.password})
+                    .then((res) => {
+                        if(res.data.auth === true){
+                            this.auth = true;
+                            this.startEditing();
+                        }else {
+                            this.loginError = true;
+                        }
+                    })
+
+            }else{
+                this.loginError = true;
+            }
+        },
+
+        logout () {
+
+            axios
+                .get('./api/logout.php')
+                .then((res) => {
+                    window.location.replace('/');
+                })
+
+        },
+        startEditing () {
+            this.openPage(this.page);
+            axios
+                .get("./api/pageList.php")
+                .then((res) => {
+    
+                   this.pageList = res.data;
+    
+                })
+    
+            this.loadBackUpList();
+
+        },
         enableLoader () {
 
             this.showLoader = true;
@@ -112,16 +152,19 @@ window.vue = new Vue ({
 
     },
     created() {
-        this.openPage(this.page);
         axios
-            .get("./api/pageList.php")
+            .get('./api/checkAuth.php')
             .then((res) => {
 
-               this.pageList = res.data;
+                if(res.data.auth === true) {
 
+                    this.auth = true;
+
+                    this.startEditing();
+                } 
+
+            
             })
-
-        this.loadBackUpList();
     }
 })
 

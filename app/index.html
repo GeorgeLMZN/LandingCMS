@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>EEEX CMS</title>
+    <title>CMS</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <iframe src="" frameborder="0"></iframe>
     <input id="img-upload" name="image" type="file" accept="image/" style="display: none">
     <div id="app">
-        <div class="panel">
+        <div class="panel" v-if="auth">
             <div>
                 <button class="uk-button uk-button-default" type="button" uk-toggle="target: #page-list">Cтраницы для редактирования</button>
                 <button class="uk-button uk-button-default" type="button" uk-toggle="target: #meta-list"> Редактор META </button>
             </div>
             <div>
+                <button class="uk-button uk-button-default" type="button" uk-toggle="target: #logout-modal">Выход</button>
                 <button class="uk-button uk-button-primary" type="button" uk-toggle="target: #save-content-modal">Опубликовать</button>
                 <button class="uk-button uk-button-primary btn-down">
                     <svg width="15" height="10" viewBox="0 0 10 7" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -88,6 +89,28 @@
                     </p>
             </div>
         </div>
+        <div id="logout-modal" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                    <h2>Выход</h2>
+                    <p>Действительно хотите выйти?</p>
+                    <p class="uk-text-right">
+                        <button class="uk-button uk-button-default uk-modal-close" type="button">Отменить</button>
+                        <button class="uk-button uk-button-primary uk-modal-close" type="button" @click="logout">Выйти</button>
+                    </p>
+            </div>
+        </div>
+       <div class="login-container" v-if="!auth">
+                <div class="login">
+                    <h2 class="uk-modal-title">Авторизация</h2>
+                    <label>
+                        Пароль:
+                        <input type="password" name="password" class="uk-input" v-model="password">
+                        <span v-if="loginError" class="error">Неверный пароль!</span>
+                    </label>
+                    <button class="uk-button uk-button-primary" type="button" v-on:click="login">Войти</button>
+                </div>
+        </div> 
+
         <div class="loader" v-bind:class="{'active': showLoader}">
             <span uk-spinner="ratio: 4.5"></span>
         </div>
